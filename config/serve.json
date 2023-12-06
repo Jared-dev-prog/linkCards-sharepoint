@@ -1,0 +1,6 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/spfx-build/spfx-serve.schema.json",
+  "port": 4321,
+  "https": true,
+  "initialPage": "https://intellego365.sharepoint.com/sites/CentralAxity/M%C3%A9xico/Consultoria/_layouts/workbench.aspx"
+}
