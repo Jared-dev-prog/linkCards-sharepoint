@@ -1,43 +1,77 @@
-import * as React from 'react';
-import styles from './LinkCards.module.scss';
-import type { ILinkCardsProps } from './ILinkCardsProps';
-import { escape } from '@microsoft/sp-lodash-subset';
+import * as React from "react";
+// import styles from './LinkCards.module.scss';
+import type { ILinkCardsProps, linkCard } from "./ILinkCardsProps";
 
-export default class LinkCards extends React.Component<ILinkCardsProps, {}> {
-  public render(): React.ReactElement<ILinkCardsProps> {
-    const {
-      description,
-      isDarkTheme,
-      environmentMessage,
-      hasTeamsContext,
-      userDisplayName
-    } = this.props;
+import { sp } from "@pnp/sp/presets/all";
+import "@pnp/sp/lists";
+import Card from "./Card";
+import styles from "./LinkCards.module.scss";
 
-    return (
-      <section className={`${styles.linkCards} ${hasTeamsContext ? styles.teams : ''}`}>
-        <div className={styles.welcome}>
-          <img alt="" src={isDarkTheme ? require('../assets/welcome-dark.png') : require('../assets/welcome-light.png')} className={styles.welcomeImage} />
-          <h2>Well done, {escape(userDisplayName)}!</h2>
-          <div>{environmentMessage}</div>
-          <div>Web part property value: <strong>{escape(description)}</strong></div>
-        </div>
-        <div>
-          <h3>Welcome to SharePoint Framework!</h3>
-          <p>
-            The SharePoint Framework (SPFx) is a extensibility model for Microsoft Viva, Microsoft Teams and SharePoint. It&#39;s the easiest way to extend Microsoft 365 with automatic Single Sign On, automatic hosting and industry standard tooling.
-          </p>
-          <h4>Learn more about SPFx development:</h4>
-          <ul className={styles.links}>
-            <li><a href="https://aka.ms/spfx" target="_blank" rel="noreferrer">SharePoint Framework Overview</a></li>
-            <li><a href="https://aka.ms/spfx-yeoman-graph" target="_blank" rel="noreferrer">Use Microsoft Graph in your solution</a></li>
-            <li><a href="https://aka.ms/spfx-yeoman-teams" target="_blank" rel="noreferrer">Build for Microsoft Teams using SharePoint Framework</a></li>
-            <li><a href="https://aka.ms/spfx-yeoman-viva" target="_blank" rel="noreferrer">Build for Microsoft Viva Connections using SharePoint Framework</a></li>
-            <li><a href="https://aka.ms/spfx-yeoman-store" target="_blank" rel="noreferrer">Publish SharePoint Framework applications to the marketplace</a></li>
-            <li><a href="https://aka.ms/spfx-yeoman-api" target="_blank" rel="noreferrer">SharePoint Framework API reference</a></li>
-            <li><a href="https://aka.ms/m365pnp" target="_blank" rel="noreferrer">Microsoft 365 Developer Community</a></li>
-          </ul>
-        </div>
-      </section>
-    );
-  }
-}
+const LinkCards: React.FC<ILinkCardsProps> = (props) => {
+  const { nameList, absoluteUrl } = props;
+  const [error, setError] = React.useState<string>(
+    "Es necesario crear una lista llamada 'linkCards' en el contenido de este sitio con las siguientes columnas: Tool, Title, Image, Card Size, Background Color, Label Button, Target Button, Button Link, Order. Agregue el nombre de la lista en el panel de propiedades del componente."
+  );
+  const [linkCards, setLinkCards] = React.useState<linkCard[]>([]);
+  const [messageEmptyList, setMessageEmptyList] = React.useState<string>("");
+  console.log(nameList);
+  console.log(absoluteUrl);
+
+  React.useEffect(() => {
+    sp.setup({
+      sp: {
+        baseUrl: absoluteUrl,
+      },
+    });
+
+    sp.web.lists
+      .getByTitle(nameList)
+      .items.get()
+      .then((response) => {
+        console.log(response);
+        const listOrder = response.sort((a, b) => a.Order0 - b.Order0);
+        console.log(listOrder);
+        setLinkCards(listOrder);
+        setError("");
+
+        if (response.length === 0) {
+          setMessageEmptyList("La lista esta vacía");
+        } else {
+          setMessageEmptyList("");
+        }
+      })
+      .catch(() => {
+        if (nameList !== "") {
+          const message = `La lista "${nameList}" no existe en el sitio`;
+          setError(message);
+        }
+      });
+  }, [nameList]);
+
+  return (
+    <section className={`${styles.container} row`}>
+      {error === "" ? null : error}
+      {linkCards.length !== 0 ? (
+        linkCards.map((card) => (
+          <Card
+            key={card.Id}
+            Id={card.Id}
+            Tool={card.Tool}
+            Title={card.Title}
+            Image={card.Image}
+            BackgroundColor={card.BackgroundColor}
+            LabelButton={card.LabelButton}
+            CardSize={card.CardSize}
+            TargetButton={card.TargetButton}
+            ButtonLink={card.ButtonLink}
+            baseUrl={absoluteUrl}
+          />
+        ))
+      ) : (
+        <div>{messageEmptyList}</div>
+      )}
+    </section>
+  );
+};
+
+export default LinkCards;

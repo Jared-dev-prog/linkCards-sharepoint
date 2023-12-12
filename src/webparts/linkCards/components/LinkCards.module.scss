@@ -1,34 +1,94 @@
-@import '~@fluentui/react/dist/sass/References.scss';
+@import "~@fluentui/react/dist/sass/References.scss";
 
-.linkCards {
-  overflow: hidden;
-  padding: 1em;
-  color: "[theme:bodyText, default: #323130]";
-  color: var(--bodyText);
-  &.teams {
-    font-family: $ms-font-family-fallbacks;
+.default {
+  background-color: #3c1053;
+}
+
+.bg_1 {
+  background: linear-gradient(102deg, #963cbd 2.01%, #f4364c 96.41%);
+}
+
+.bg_2 {
+  background: linear-gradient(289deg, #963cbd 3.37%, #3cfe90);
+}
+
+.bg_3 {
+  background: linear-gradient(289deg, #963cbd 3.41%, #ff832a 68.31%);
+}
+
+.bg_4 {
+  background: linear-gradient(288deg, #783cbd 2.25%, #04d6ff);
+}
+
+.container {
+  width: 100%;
+}
+
+.card {
+  display: flex;
+  color: #fff;
+  height: 152px;
+  border-radius: 5px;
+  padding: 15px;
+  align-items: center;
+  justify-content: center;
+  column-gap: 5px;
+
+  h1 {
+    font-size: 16px;
+  }
+
+  h2 {
+    font-size: 13px;
   }
 }
 
-.welcome {
+.image__container {
+  height: 100%;
+  width: 30%;
+  min-width: 30%;
+  background-color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 5px;
+}
+
+img {
+  height: 90%;
+  width: 90%;
+  display: block;
+  object-fit: cover;
+}
+
+.title {
   text-align: center;
 }
 
-.welcomeImage {
-  width: 100%;
-  max-width: 420px;
+.card__button {
+  color: #fff;
+  text-decoration: none;
+  text-align: center;
+  font-weight: 600;
+  padding: 5px 5px -5px 5px;
+  transition: background-color 300ms ease-out;
+
+  &:hover {
+    cursor: pointer;
+    background-color: rgba(120, 60, 189, 0.598);
+    border-radius: 5px;
+    transition: background-color 300ms ease-out;
+  }
 }
 
-.links {
-  a {
-    text-decoration: none;
-    color: "[theme:link, default:#03787c]";
-    color: var(--link); // note: CSS Custom Properties support is limited to modern browsers only
-
-    &:hover {
-      text-decoration: underline;
-      color: "[theme:linkHovered, default: #014446]";
-      color: var(--linkHovered); // note: CSS Custom Properties support is limited to modern browsers only
-    }
-  }
+.card__button::after {
+  content: "";
+  display: block;
+  color: #fff;
+  height: 5px;
+  width: auto;
+  margin-top: 5px;
+  background-color: #783cbd;
+  border-bottom-left-radius: 50%;
+  border-bottom-right-radius: 50%;
 }
