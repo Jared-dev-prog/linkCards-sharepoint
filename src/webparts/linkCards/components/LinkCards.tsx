@@ -1,21 +1,73 @@
 import * as React from "react";
 // import styles from './LinkCards.module.scss';
-import type { ILinkCardsProps, linkCard } from "./ILinkCardsProps";
+import type { ILinkCardsProps, InfoPage, linkCard } from "./ILinkCardsProps";
 
 import { sp } from "@pnp/sp/presets/all";
 import "@pnp/sp/lists";
 import Card from "./Card";
 import styles from "./LinkCards.module.scss";
+import { ITEM_PER_PAGE } from "../constants/routes";
+import { Pagination } from "@pnp/spfx-controls-react/lib/pagination";
 
 const LinkCards: React.FC<ILinkCardsProps> = (props) => {
   const { nameList, absoluteUrl } = props;
   const [error, setError] = React.useState<string>(
     "Es necesario crear una lista llamada 'linkCards' en el contenido de este sitio con las siguientes columnas: Tool, Title, Image, Card Size, Background Color, Label Button, Target Button, Button Link, Order. Agregue el nombre de la lista en el panel de propiedades del componente."
   );
+  const [linkCardsOrigin, setLinkCardsOrigin] = React.useState<linkCard[]>([]);
   const [linkCards, setLinkCards] = React.useState<linkCard[]>([]);
+  const [infoPage, setInfoPage] = React.useState<InfoPage>({
+    items: [],
+    itemsOffset: 0,
+    itemsPerPage: ITEM_PER_PAGE,
+    endOffset: 0,
+    pageCount: 0,
+    itemsTotal: 0,
+    pageActual: 0,
+    itemInit: 0,
+    itemSecond: 0,
+  });
+  const [itemPerPage, setItemPerPage] = React.useState<string>(
+    ITEM_PER_PAGE.toString()
+  );
   const [messageEmptyList, setMessageEmptyList] = React.useState<string>("");
-  console.log(nameList);
-  console.log(absoluteUrl);
+  const getInitList = (
+    listOrigin: linkCard[],
+    Offset: number = 0,
+    itemsPerPage: number = ITEM_PER_PAGE
+  ): void => {
+    setInfoPage({
+      items: [],
+      itemsOffset: Offset,
+      itemsPerPage: itemsPerPage,
+      endOffset: Offset + itemsPerPage,
+      pageCount: Math.ceil(listOrigin.length / itemsPerPage),
+      itemsTotal: listOrigin.length,
+      pageActual: 1,
+      itemInit: 1,
+      itemSecond:
+        listOrigin.length <= itemsPerPage ? listOrigin.length : itemsPerPage,
+    });
+    const currentItems = listOrigin.slice(Offset, Offset + itemsPerPage);
+    setLinkCards(currentItems);
+  };
+  const handleSelectChange = (event: any) => {
+    setItemPerPage(event.target.value);
+    getInitList(linkCardsOrigin, 0, event.target.value);
+  };
+
+  const _getPage = (page: number): void => {
+    const offset = (page - 1) * Number(itemPerPage);
+    const limit = page * Number(itemPerPage);
+    const currentItems = linkCardsOrigin.slice(offset, limit);
+    setLinkCards(currentItems);
+    setInfoPage({
+      ...infoPage,
+      pageActual: page,
+      itemInit: offset + 1,
+      itemSecond: (page - 1) * Number(itemPerPage) + currentItems.length,
+    });
+  };
 
   React.useEffect(() => {
     sp.setup({
@@ -28,12 +80,10 @@ const LinkCards: React.FC<ILinkCardsProps> = (props) => {
       .getByTitle(nameList)
       .items.get()
       .then((response) => {
-        console.log(response);
         const listOrder = response.sort((a, b) => a.Order0 - b.Order0);
-        console.log(listOrder);
-        setLinkCards(listOrder);
+        setLinkCardsOrigin(listOrder);
+        getInitList(listOrder, 0, ITEM_PER_PAGE);
         setError("");
-
         if (response.length === 0) {
           setMessageEmptyList("La lista esta vacía");
         } else {
@@ -70,6 +120,31 @@ const LinkCards: React.FC<ILinkCardsProps> = (props) => {
       ) : (
         <div>{messageEmptyList}</div>
       )}
+      <div className={`d-flex`}>
+        <div className={styles.padding_right}>Registros por pagina</div>
+        <div>
+          <select value={itemPerPage} onChange={handleSelectChange}>
+            {/* Opciones del select */}
+            <option value="10">10</option>
+            <option value="15">15</option>
+            <option value="20">20</option>
+            <option value="25">25</option>
+          </select>
+        </div>
+      </div>
+
+      <div className={`d-flex justify-content-end align-items-center`}>
+        <div className={styles.padding_right}>
+          Mostrando {infoPage.itemInit} - {infoPage.itemSecond} de{" "}
+          {infoPage.itemsTotal}
+        </div>
+        <Pagination
+          currentPage={1}
+          totalPages={infoPage.pageCount}
+          onChange={(page) => _getPage(page)}
+          limiter={3}
+        />{" "}
+      </div>
     </section>
   );
 };

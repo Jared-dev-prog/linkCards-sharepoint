@@ -19,3 +19,18 @@ export interface linkCard {
   TargetButton: string;
   baseUrl: string;
 }
+export interface InfoPage {
+  items: number[];
+  itemsOffset: number;
+  itemsPerPage: number;
+  endOffset: number;
+  pageCount: number;
+  itemsTotal: number;
+  pageActual: number;
+  itemInit: number;
+  itemSecond: number;
+}
+export interface IPnPPaginationState {
+  allItems: linkCard[];
+  paginatedItems: linkCard[];
+}
