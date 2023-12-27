@@ -27,7 +27,7 @@
       "group": { "default": "Advanced" },
       "title": { "default": "linkCards" },
       "description": { "default": "linkCards description" },
-      "officeFabricIconFontName": "Page",
+      "officeFabricIconFontName": "GridViewMedium",
       "properties": {
         "nameList": ""
       }

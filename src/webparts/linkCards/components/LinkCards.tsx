@@ -10,9 +10,23 @@ import { ITEM_PER_PAGE } from "../constants/routes";
 import { Pagination } from "@pnp/spfx-controls-react/lib/pagination";
 
 const LinkCards: React.FC<ILinkCardsProps> = (props) => {
+  const options = [
+    {
+      value: 10,
+    },
+    {
+      value: 15,
+    },
+    {
+      value: 20,
+    },
+    {
+      value: 25,
+    },
+  ];
   const { nameList, absoluteUrl } = props;
   const [error, setError] = React.useState<string>(
-    "Es necesario crear una lista llamada 'linkCards' en el contenido de este sitio con las siguientes columnas: Tool, Title, Image, Card Size, Background Color, Label Button, Target Button, Button Link, Order. Agregue el nombre de la lista en el panel de propiedades del componente."
+    "Es necesario crear una lista en el contenido de este sitio con las siguientes columnas: Tool, Title, Image, Card Size, Background Color, Label Button, Target Button, Button Link, Order. Agregue el nombre de la lista en el panel de propiedades del componente."
   );
   const [linkCardsOrigin, setLinkCardsOrigin] = React.useState<linkCard[]>([]);
   const [linkCards, setLinkCards] = React.useState<linkCard[]>([]);
@@ -51,9 +65,11 @@ const LinkCards: React.FC<ILinkCardsProps> = (props) => {
     const currentItems = listOrigin.slice(Offset, Offset + itemsPerPage);
     setLinkCards(currentItems);
   };
-  const handleSelectChange = (event: any) => {
+  const handleSelectChange = (
+    event: React.ChangeEvent<HTMLSelectElement>
+  ): void => {
     setItemPerPage(event.target.value);
-    getInitList(linkCardsOrigin, 0, event.target.value);
+    getInitList(linkCardsOrigin, 0, +event.target.value);
   };
 
   const _getPage = (page: number): void => {
@@ -125,15 +141,16 @@ const LinkCards: React.FC<ILinkCardsProps> = (props) => {
         <div>
           <select value={itemPerPage} onChange={handleSelectChange}>
             {/* Opciones del select */}
-            <option value="10">10</option>
-            <option value="15">15</option>
-            <option value="20">20</option>
-            <option value="25">25</option>
+            {options.map((option) => (
+              <option key={option.value} value={option.value}>
+                {option.value}
+              </option>
+            ))}
           </select>
         </div>
       </div>
 
-      <div className={`d-flex justify-content-end align-items-center`}>
+      <div className={styles.d__paginator}>
         <div className={styles.padding_right}>
           Mostrando {infoPage.itemInit} - {infoPage.itemSecond} de{" "}
           {infoPage.itemsTotal}
