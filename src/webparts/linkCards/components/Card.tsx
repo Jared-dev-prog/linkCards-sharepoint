@@ -41,16 +41,26 @@ const Card: React.FC<linkCard> = (props) => {
         <div className={styles.image__container}>
           <img src={imageURL} alt={objectImage.fileName} />
         </div>
-        <div className={styles.title}>
-          <h1>{Tool.toUpperCase()}</h1>
-          <h2>{Title.toUpperCase()}</h2>
+        <div className={styles.info__container}>
+          <div className="p1 text-center">
+            <h1>{Tool.toUpperCase()}</h1>
+          </div>
+          <div>
+            <div className={styles.info__description} title={Title}>
+              <h2>{Title.toUpperCase()}</h2>
+            </div>
+            <div className="d-flex justify-content-center pt-3">
+              <h2>
+                <a
+                  onClick={() => handleRedirect(ButtonLink, TargetButton)}
+                  className={styles.card__button}
+                >
+                  {LabelButton}
+                </a>
+              </h2>
+            </div>
+          </div>
         </div>
-        <a
-          onClick={() => handleRedirect(ButtonLink, TargetButton)}
-          className={styles.card__button}
-        >
-          {LabelButton}
-        </a>
       </div>
     </div>
   );
