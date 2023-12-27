@@ -40,6 +40,11 @@
 
   h2 {
     font-size: 13px;
+    display: flex;
+    margin: 0;
+    height: 100%;
+    align-items: self-end;
+    justify-content: center;
   }
 }
 
@@ -67,6 +72,10 @@
 
   h2 {
     font-weight: 700;
+    display: flex;
+    margin: 0;
+    height: 100%;
+    align-items: self-end;
   }
 }
 
