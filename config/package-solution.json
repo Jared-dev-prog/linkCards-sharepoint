@@ -3,7 +3,7 @@
   "solution": {
     "name": "link-cards-client-side-solution",
     "id": "37c63bec-a83e-42fa-9735-f8ca5d58265a",
-    "version": "1.0.0.1",
+    "version": "1.0.0.3",
     "includeClientSideAssets": true,
     "skipFeatureDeployment": true,
     "isDomainIsolated": false,
@@ -30,7 +30,7 @@
         "title": "link-cards Feature",
         "description": "The feature that activates elements of the link-cards solution.",
         "id": "84cd4dbd-0afd-455d-acb3-84c7a260a6fb",
-        "version": "1.0.0.1"
+        "version": "1.0.0.3"
       }
     ]
   },
